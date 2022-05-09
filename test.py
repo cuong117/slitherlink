@@ -46,7 +46,8 @@ def read_result(result, file):
 
 
 def run_all_test():
-    maps = [maps5, maps7, maps10, maps15, maps20, maps30]
+    # maps = [maps5, maps7, maps10, maps15, maps20, maps30]
+    maps = [maps5, maps7, maps10]
     file = open(outputFile, 'w')
     for mapi in maps:
         for m in mapi:
