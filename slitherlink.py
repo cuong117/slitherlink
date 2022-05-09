@@ -1,18 +1,14 @@
+import time
+from threading import Event, Thread
+
 import pycosat
 
-n = 5
-m = 5
-puzzle1 = [[-1, -1, 0, 2, -1],
-           [2, 2, 2, -1, -1],
-           [-1, -1, -1, 2, -1],
-           [2, 1, -1, 0, 3],
-           [-1, 2, 3, 3, -1]]
-
-puzzle = [[-1, -1, -1, 3, -1],
-          [2, 2, 0, -1, 2],
-          [2, -1, 2, -1, 2],
-          [-1, -1, 0, -1, -1],
-          [-1, 3, 3, 3, -1]]
+n = 0
+m = 0
+puzzle = []
+clause = []
+result = dict()
+stop_event = Event()
 
 
 def get_line_from_box(i, j):
@@ -62,7 +58,7 @@ def rule1():
 
 
 def rule2():
-    clause = []
+    clauses = []
     size = (m + 1) * (n + 1)
     for k in range(size):
         lines = get_line_from_node(k)
@@ -72,30 +68,37 @@ def rule2():
             for j in range(length):
                 if j != i:
                     temp.append(lines[j])
-            clause.append(temp)
+            clauses.append(temp)
         if length > 2:
             for i in range(length):
                 for j in range(i + 1, length):
                     for z in range(j + 1, length):
-                        clause.append([-lines[i], -lines[j], -lines[z]])
-    return clause
+                        clauses.append([-lines[i], -lines[j], -lines[z]])
+    return clauses
 
 
-def run_rule3():
+def rule3():
+    global result
+    global clause
     size = (n + 1) * (m + 1)
     count = 0
     cycle_element = 1
     sol = None
-    clauses = rule1() + rule2()
+    clause = rule1() + rule2()
+    count_loop = 0
+    time_out = False
     while count != cycle_element:
+        if stop_event.is_set():
+            time_out = True
+            break
+        count_loop += 1
         count = 0
         if sol:
             temp = []
             for val in sol:
                 temp.append(-val)
-            clauses.append(temp)
-        sol = pycosat.solve(clauses)
-        # print(sol)
+            clause.append(temp)
+        sol = pycosat.solve(clause)
         if type(sol) is str:
             break
 
@@ -113,11 +116,9 @@ def run_rule3():
                     break
             if check:
                 break
-
-    if type(sol) is str:
-        return False
-    else:
-        return sol
+    if not time_out:
+        result['result'] = sol
+        result['reload'] = count_loop
 
 
 def find_cycle_element(k, line, sol):
@@ -198,57 +199,33 @@ def rule1_val_4(i, j):
     return get_line_from_box(i, j)
 
 
-def rule2_test(k):
-    clause = []
-    lines = get_line_from_node(k)
-    length = len(lines)
-    for i in range(length):
-        temp = [-lines[i]]
-        for j in range(length):
-            if j != i:
-                temp.append(lines[j])
-        clause.append(temp)
-    if length > 2:
-        for i in range(length):
-            for j in range(i + 1, length):
-                for z in range(j + 1, length):
-                    clause.append([-lines[i], -lines[j], -lines[z]])
-    return clause
+def run():
+    global stop_event
+    action_thread = Thread(target=rule3)
+    action_thread.start()
+    action_thread.join(timeout=900)
+    stop_event.set()
+    stop_event = Event()
+    if not result:
+        result['result'] = "Time out"
 
 
-def read_result(sol):
-    if not sol:
-        print("Không có lời giải")
-        return
-    for i in range(m + 1):
-        for j in range(n + 1):
-            if j == m:
-                print("*", end='')
-            else:
-                line = i * n + j + 1
-                if sol[line - 1] > 0:
-                    print("*---", end="")
-                else:
-                    print("*   ", end="")
-        print()
-        if i < m:
-            for j in range(m + 1):
-                line = (m + 1) * n + j * m + i + 1
-                if sol[line - 1] > 0:
-                    print("|", end="")
-                else:
-                    print(" ", end="")
-                if j <= n - 1 and i <= m - 1:
-                    if puzzle[i][j] > -1:
-                        print(" ", puzzle[i][j], " ", sep="", end="")
-                    else:
-                        print('   ', end="")
-            print()
-
-
-read_result(run_rule3())
-# print(run_rule3())
-# s = pycosat.itersolve(rule1() + rule2())
-# for si in s:
-#     read_result(si)
-#     print('\n')
+def solve(matrix):
+    global m
+    global n
+    global puzzle
+    global result
+    result = dict()
+    m = len(matrix)
+    n = len(matrix[0])
+    puzzle = matrix
+    start = time.time()
+    run()
+    end = time.time()
+    if type(result['result'] is str):
+        result["variables"] = (m+1)*n + n*m + m
+    else:
+        result['variables'] = len(result['result'])
+    result["clauses"] = len(clause)
+    result["time"] = (end - start) * 1000
+    return result
