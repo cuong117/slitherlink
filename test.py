@@ -4,12 +4,13 @@ from ReadFile import maps5, maps7, maps10, maps15, maps20, maps30
 outputFile = 'output/output.txt'
 
 
-def read_result(result, file):
+def read_result(result):
     sol = result["result"]
     time = result['time']
     variables = result['variables']
     clauses = result['clauses']
     from slitherlink import m, n, puzzle
+    file = open(outputFile, 'a')
     file.write(f'{m} x {n}\n')
     if type(sol) is str:
         file.write(f'Result: {sol}\nTime: %.3f ms\nVariables: {variables}\n' % time)
@@ -43,16 +44,23 @@ def read_result(result, file):
             file.write("\n")
     file.write(f'Time: %.3f ms\nVariables: {variables}\n' % time)
     file.write(f'Clauses: {clauses}\nReload: {reload}\n\n')
+    file.close()
 
 
 def run_all_test():
-    # maps = [maps5, maps7, maps10, maps15, maps20, maps30]
-    maps = [maps5, maps7, maps10]
-    file = open(outputFile, 'w')
+    maps = [maps5, maps7, maps10, maps15, maps20, maps30]
+    # maps = [maps5, maps7, maps10]
+    # maps = [maps7]
+    count = 1
+
     for mapi in maps:
         for m in mapi:
-            read_result(solve(m), file)
-    file.close()
+            print(f'test {count} running...', end=" ")
+            read_result(solve(m))
+            print("ended")
+            count += 1
+    # read_result(solve(maps20[0]), file)
+
 
 
 run_all_test()

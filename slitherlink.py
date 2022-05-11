@@ -130,6 +130,21 @@ def find_cycle_element(k, line, sol):
     visited = [line]
     li = line
     while current_node != k:
+        if current_node:
+            lines = get_line_from_node(current_node)
+            update = False
+            for val in lines:
+                if sol[val - 1] > 0 and visited.count(val) == 0:
+                    li = val
+                    visited.append(val)
+                    update = True
+                    break
+            if not update:
+                return -1
+            pre_node = current_node
+            i = int(current_node / (n + 1))
+            j = int(current_node % (n + 1))
+
         if (m + 1) * n + j * m + i == li:
             current_node = pre_node - n - 1
         elif i * n + j + 1 == li:
@@ -138,14 +153,8 @@ def find_cycle_element(k, line, sol):
             current_node = pre_node + n + 1
         elif i * n + j == li:
             current_node = pre_node - 1
-        lines = get_line_from_node(current_node)
-        for val in lines:
-            if sol[val - 1] > 0 and visited.count(val) == 0:
-                li = val
-                visited.append(val)
-        pre_node = current_node
-        i = int(current_node / (n + 1))
-        j = int(current_node % (n + 1))
+        else:
+            return -1
         count += 1
     return count
 
@@ -205,7 +214,8 @@ def run():
     action_thread.start()
     action_thread.join(timeout=900)
     stop_event.set()
-    stop_event = Event()
+    while action_thread.is_alive():
+        pass
     if not result:
         result['result'] = "Time out"
 
@@ -215,6 +225,8 @@ def solve(matrix):
     global n
     global puzzle
     global result
+    global stop_event
+    stop_event = Event()
     result = dict()
     m = len(matrix)
     n = len(matrix[0])

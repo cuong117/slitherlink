@@ -37,3 +37,14 @@ for line in file:
         cur_map.append(line)
 
 file.close()
+# count = 0
+# for mapi in maps30:
+#     for m in mapi:
+#         count += 1
+#         if len(m) != 30:
+#             print(count, False, "--------------------", end="\t")
+#         else:
+#             print(count, True, end='\t')
+#     count = 0
+#     print()
+
