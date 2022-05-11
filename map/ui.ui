@@ -78,7 +78,7 @@
       <x>680</x>
       <y>320</y>
       <width>111</width>
-      <height>161</height>
+      <height>203</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -165,6 +165,20 @@
       <widget class="QLabel" name="time">
        <property name="text">
         <string>Clauses:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="reload">
+       <property name="text">
+        <string>Reload:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="result">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

@@ -84,6 +84,7 @@ class MyApp(QtWidgets.QMainWindow):
         self.clause.setText("Clause: " + str(self.__result['clauses']))
         self.variable.setText('Variable: ' + str(self.__result['variables']))
         self.time.setText("Time: %.5f s" % (self.__result['time']))
+        self.reload.setText(f"Reload: {self.__result['reload']}")
 
     def paintEvent(self, event):
         self.draw_point(self.__slitherlink_size, self.__slitherlink_size)
