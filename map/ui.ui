@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1118</width>
-    <height>982</height>
+    <height>969</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -138,7 +138,7 @@
       <x>20</x>
       <y>20</y>
       <width>911</width>
-      <height>911</height>
+      <height>781</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -195,25 +195,25 @@
      <bool>false</bool>
     </attribute>
     <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>30</number>
+     <number>22</number>
     </attribute>
     <attribute name="horizontalHeaderHighlightSections">
      <bool>false</bool>
     </attribute>
     <attribute name="horizontalHeaderMinimumSectionSize">
-     <number>30</number>
+     <number>22</number>
     </attribute>
     <attribute name="verticalHeaderVisible">
      <bool>false</bool>
     </attribute>
     <attribute name="verticalHeaderDefaultSectionSize">
-     <number>30</number>
+     <number>22</number>
     </attribute>
     <attribute name="verticalHeaderHighlightSections">
      <bool>false</bool>
     </attribute>
     <attribute name="verticalHeaderMinimumSectionSize">
-     <number>30</number>
+     <number>22</number>
     </attribute>
     <attribute name="verticalHeaderShowSortIndicator" stdset="0">
      <bool>false</bool>
