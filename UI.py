@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 import sys
 from ReadFile import maps5, maps7, maps10, maps15, maps20, maps30
 
-distance = 22
+distance = 30
 
 
 class MyApp(QtWidgets.QMainWindow):
