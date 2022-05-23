@@ -54,19 +54,14 @@ def read_result(result, outFile):
 
 def run_all_test():
     maps = [maps5, maps7, maps10, maps15, maps20, maps30]
-    # maps = [maps5, maps7, maps10]
-    # maps = [maps7]
     count = 1
 
     for mapi in maps:
         for m in mapi:
             print(f'test {count} running...', end=" ")
-            # print(solve_op(m))
             read_result(solve_op(m), outputFile_new)
             print("ended")
             count += 1
-    # read_result(solve(maps5[1]))
-    # read_result(solve(maps20[0]), file)
 
 
 run_all_test()
