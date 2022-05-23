@@ -1,10 +1,12 @@
-from slitherlink import solve
+
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys
 from ReadFile import maps5, maps7, maps10, maps15, maps20, maps30
+from slitherlink import solve
+from slitherlink_optimize import solve as solve_op
 
 distance = 30
 
@@ -98,10 +100,16 @@ class MyApp(QtWidgets.QMainWindow):
     def solver(self):
         self.flag = True
         self.update()
-        self.__result = solve(self.__maps[self.__size][self.__map])
+        index = self.input_method.currentIndex()
+        if index:
+            print("a")
+            self.__result = solve_op(self.__maps[self.__size][self.__map])
+            print("b")
+        else:
+            self.__result = solve(self.__maps[self.__size][self.__map])
         self.clause.setText("Clause: " + str(self.__result['clauses']))
         self.variable.setText('Variable: ' + str(self.__result['variables']))
-        self.time.setText("Time: %.5f s" % (self.__result['time']))
+        self.time.setText("Time: %.5f ms" % (self.__result['time']))
         self.reload.setText(f"Reload: {self.__result['reload']}")
         
     def paintEvent(self, event):

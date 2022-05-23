@@ -23,10 +23,24 @@
       <x>980</x>
       <y>260</y>
       <width>121</width>
-      <height>203</height>
+      <height>232</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QComboBox" name="input_method">
+       <item>
+        <property name="text">
+         <string>not optimal</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>optimal</string>
+        </property>
+       </item>
+      </widget>
+     </item>
      <item>
       <widget class="QComboBox" name="input_size">
        <item>

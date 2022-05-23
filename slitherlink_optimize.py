@@ -5,6 +5,8 @@ import pycosat
 
 n = 0
 m = 0
+count_box = 0
+line_box = dict()
 puzzle = []
 clause = []
 result = dict()
@@ -41,9 +43,18 @@ def get_line_from_node(k):
 
 
 def rule1():
+    global count_box
     clauses = []
     for i in range(m):
         for j in range(n):
+            if puzzle[i][j] > 0:
+                count_box += 1
+                line = get_line_from_box(i, j)
+                for var in line:
+                    if var in line_box:
+                        line_box[var].append((i, j))
+                    else:
+                        line_box[var] = [(i, j)]
             if puzzle[i][j] == 0:
                 clauses += rule1_val_0(i, j)
             elif puzzle[i][j] == 1:
@@ -80,67 +91,70 @@ def rule2():
 def rule3():
     global result
     global clause
-    size = (n + 1) * (m + 1)
-    count = 0
-    cycle_element = 1
     sol = None
     clause = rule1() + rule2()
     count_loop = 0
     time_out = False
-    while count != cycle_element:
+    while True:
         if stop_event.is_set():
             time_out = True
             break
         count_loop += 1
-        count = 0
-        if sol:
-            temp = []
-            for val in sol:
-                temp.append(-val)
-            clause.append(temp)
         sol = pycosat.solve(clause)
         if type(sol) is str:
             break
+        res = check_cycle(sol)
+        if type(res) is bool and res:
+            break
+        else:
+            clause += res
 
-        for val in sol:
-            if val > 0:
-                count += 1
-
-        check = False
-        for k in range(size):
-            lines = get_line_from_node(k)
-            for line in lines:
-                if sol[line - 1] > 0:
-                    cycle_element = find_cycle_element(k, line, sol)
-                    check = True
-                    break
-            if check:
-                break
     if not time_out:
         result['result'] = sol
         result['reload'] = count_loop
 
 
-def find_cycle_element(k, line, sol):
-    count = 0
-    pre_node = k
+def check_cycle(solves):
+    size = (m + 1) * (n + 1)
+    true_element = 0
+    visited_line = []
+    clauses = []
+    visited_node = []
+    for val in solves:
+        if val > 0:
+            true_element += 1
+    while True:
+        node, line = find_node_start_cycle(solves, visited_node, size)
+        if line:
+            line_element, box_element, line_list, node_list = find_cycle_element(node, line, solves)
+            if true_element == line_element:
+                return True
+            if count_box > box_element:
+                clauses.append([-var for var in line_list])
+            visited_line += line_list
+            visited_node += node_list
+        else:
+            return clauses
+
+
+def find_cycle_element(node, line, solves):
+    visited_line = [line]
+    visited_node = [node]
+    visited_box = set()
+    pre_node = node
     current_node = None
-    i = int(k / (n + 1))
-    j = int(k % (n + 1))
-    visited = [line]
     li = line
-    while current_node != k:
+    i = int(node / (n + 1))
+    j = int(node % (n + 1))
+    count = 0
+    while current_node != node:
         if current_node:
             lines = get_line_from_node(current_node)
-            update = False
             for val in lines:
-                if sol[val - 1] > 0 and visited.count(val) == 0:
+                if solves[val - 1] > 0 and val not in visited_line:
                     li = val
-                    visited.append(val)
-                    update = True
-                    break
-            if not update:
-                return -1
+                    visited_line.append(val)
+                    visited_node.append(current_node)
             pre_node = current_node
             i = int(current_node / (n + 1))
             j = int(current_node % (n + 1))
@@ -153,10 +167,21 @@ def find_cycle_element(k, line, sol):
             current_node = pre_node + n + 1
         elif i * n + j == li:
             current_node = pre_node - 1
-        else:
-            return -1
+        if li in line_box:
+            for var in line_box[li]:
+                visited_box.add(var)
         count += 1
-    return count
+    return [count, len(visited_box), visited_line, visited_node]
+
+
+def find_node_start_cycle(solves, visited_node, size):
+    for val in range(size):
+        if val not in visited_node:
+            lines = get_line_from_node(val)
+            for line in lines:
+                if solves[line - 1] > 0:
+                    return [val, line]
+    return [False, False]
 
 
 def rule1_val_0(i, j):
@@ -241,4 +266,3 @@ def solve(matrix):
     result["clauses"] = len(clause)
     result["time"] = (end - start) * 1000
     return result
-

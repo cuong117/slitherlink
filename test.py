@@ -1,16 +1,21 @@
 from slitherlink import solve
+from slitherlink_optimize import solve as solve_op
 from ReadFile import maps5, maps7, maps10, maps15, maps20, maps30
 
 outputFile = 'output/output.txt'
+outputFile_new = 'output/output_new'
 
 
-def read_result(result):
+def read_result(result, outFile):
     sol = result["result"]
     time = result['time']
     variables = result['variables']
     clauses = result['clauses']
-    from slitherlink import m, n, puzzle
-    file = open(outputFile, 'a')
+    if outFile == outputFile:
+        from slitherlink import m, n, puzzle
+    else:
+        from slitherlink_optimize import m, n, puzzle
+    file = open(outFile, 'a')
     file.write(f'{m} x {n}\n')
     if type(sol) is str:
         file.write(f'Result: {sol}\nTime: %.3f ms\nVariables: {variables}\n' % time)
@@ -56,11 +61,12 @@ def run_all_test():
     for mapi in maps:
         for m in mapi:
             print(f'test {count} running...', end=" ")
-            read_result(solve(m))
+            # print(solve_op(m))
+            read_result(solve_op(m), outputFile_new)
             print("ended")
             count += 1
+    # read_result(solve(maps5[1]))
     # read_result(solve(maps20[0]), file)
-
 
 
 run_all_test()
