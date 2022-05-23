@@ -102,14 +102,12 @@ class MyApp(QtWidgets.QMainWindow):
         self.update()
         index = self.input_method.currentIndex()
         if index:
-            print("a")
             self.__result = solve_op(self.__maps[self.__size][self.__map])
-            print("b")
         else:
             self.__result = solve(self.__maps[self.__size][self.__map])
         self.clause.setText("Clause: " + str(self.__result['clauses']))
         self.variable.setText('Variable: ' + str(self.__result['variables']))
-        self.time.setText("Time: %.5f ms" % (self.__result['time']))
+        self.time.setText("Time: %.3f ms" % (self.__result['time']))
         self.reload.setText(f"Reload: {self.__result['reload']}")
         
     def paintEvent(self, event):
